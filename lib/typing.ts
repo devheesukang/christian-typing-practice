@@ -1,5 +1,57 @@
 const PUNCTUATION_REGEX = /[,.]/g;
 const NEWLINE_REGEX = /[\r\n]+/g;
+const PUNCTUATION_SET = new Set([",", "."]);
+
+export const buildDisplayText = (
+  original: string,
+  typedCount: number,
+  includeAutoPunct = true
+) => {
+  const normalizedOriginal = original.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  let display = "";
+  let normCount = 0;
+  let prevSpace = false;
+
+  for (const char of normalizedOriginal) {
+    const isPunct = PUNCTUATION_SET.has(char);
+    const isNewline = char === "\n";
+    const isSpace = char === " " || char === "\t";
+
+    if (isPunct) {
+      if (normCount < typedCount || (includeAutoPunct && normCount === typedCount)) {
+        display += char;
+        continue;
+      }
+      break;
+    }
+
+    if (isNewline || isSpace) {
+      if (prevSpace) {
+        if (normCount < typedCount) {
+          display += isNewline ? "\n" : " ";
+        }
+        continue;
+      }
+      if (normCount < typedCount) {
+        display += isNewline ? "\n" : " ";
+        normCount += 1;
+        prevSpace = true;
+        continue;
+      }
+      break;
+    }
+
+    if (normCount < typedCount) {
+      display += char;
+      normCount += 1;
+      prevSpace = false;
+      continue;
+    }
+    break;
+  }
+
+  return display;
+};
 
 export const normalizePrayerText = (text: string) =>
   text.replace(PUNCTUATION_REGEX, "").replace(NEWLINE_REGEX, " ").replace(/\s+/g, " ").trim();

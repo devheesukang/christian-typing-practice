@@ -16,7 +16,7 @@ export default function ClearPage() {
   }, []);
 
   return (
-    <div className="retro-wood min-h-screen p-6 text-amber-900">
+    <div className="wood-bg min-h-screen p-6 text-amber-900">
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
         <RetroPanel title="클리어!">
           {result ? (
@@ -37,9 +37,6 @@ export default function ClearPage() {
             <RetroButton onClick={() => router.push("/")}>메인 메뉴</RetroButton>
             <RetroButton variant="secondary" onClick={() => router.push("/game")}>
               다시 하기
-            </RetroButton>
-            <RetroButton variant="secondary" onClick={() => router.push("/ranking")}>
-              랭킹 보기
             </RetroButton>
           </div>
         </RetroPanel>

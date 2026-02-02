@@ -18,7 +18,7 @@ export default function NicknamePage() {
   }, [nickname]);
 
   return (
-    <div className="retro-wood min-h-screen p-6 text-amber-900">
+    <div className="wood-bg min-h-screen p-6 text-amber-900">
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
         <RetroPanel title="닉네임 입력">
           <div className="space-y-4">
@@ -29,7 +29,7 @@ export default function NicknamePage() {
               className="w-full rounded-lg border-2 border-amber-300 bg-white/80 px-4 py-3 text-lg"
               value={value}
               onChange={(event) => setValue(event.target.value)}
-              placeholder="TEAM-001"
+              placeholder="매듭 회장단"
             />
             <div className="flex flex-wrap gap-3">
               <RetroButton

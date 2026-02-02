@@ -8,9 +8,16 @@ type Props = {
   settings: SettingsState;
   onClose: () => void;
   onChange: (next: SettingsState) => void;
+  showPrayerVersion?: boolean;
 };
 
-export default function SettingsModal({ open, settings, onClose, onChange }: Props) {
+export default function SettingsModal({
+  open,
+  settings,
+  onClose,
+  onChange,
+  showPrayerVersion = false,
+}: Props) {
   if (!open) return null;
 
   const update = (patch: Partial<SettingsState>) => {
@@ -53,25 +60,27 @@ export default function SettingsModal({ open, settings, onClose, onChange }: Pro
               ))}
             </div>
           </div>
-          <div>
-            <div className="mb-2 font-semibold">주기도문 버전</div>
-            <div className="flex gap-2">
-              <RetroButton
-                type="button"
-                variant={settings.prayerVersion === "new" ? "primary" : "secondary"}
-                onClick={() => update({ prayerVersion: "new" })}
-              >
-                새
-              </RetroButton>
-              <RetroButton
-                type="button"
-                variant={settings.prayerVersion === "classic" ? "primary" : "secondary"}
-                onClick={() => update({ prayerVersion: "classic" })}
-              >
-                개역
-              </RetroButton>
+          {showPrayerVersion ? (
+            <div>
+              <div className="mb-2 font-semibold">주기도문 버전</div>
+              <div className="flex gap-2">
+                <RetroButton
+                  type="button"
+                  variant={settings.prayerVersion === "new" ? "primary" : "secondary"}
+                  onClick={() => update({ prayerVersion: "new" })}
+                >
+                  새
+                </RetroButton>
+                <RetroButton
+                  type="button"
+                  variant={settings.prayerVersion === "classic" ? "primary" : "secondary"}
+                  onClick={() => update({ prayerVersion: "classic" })}
+                >
+                  개역
+                </RetroButton>
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
         <div className="mt-6 flex justify-end gap-2">
           <RetroButton type="button" onClick={onClose}>

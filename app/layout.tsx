@@ -1,19 +1,6 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR, VT323 } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/state/AppContext";
-
-const notoSansKr = Noto_Sans_KR({
-  variable: "--font-body",
-  subsets: ["latin", "korean"],
-  weight: ["400", "500", "700"],
-});
-
-const vt323 = VT323({
-  variable: "--font-title",
-  subsets: ["latin"],
-  weight: ["400"],
-});
 
 export const metadata: Metadata = {
   title: "주기도문 타자연습",
@@ -27,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${notoSansKr.variable} ${vt323.variable} antialiased`}>
+      <body className="antialiased">
         <AppProvider>{children}</AppProvider>
       </body>
     </html>
