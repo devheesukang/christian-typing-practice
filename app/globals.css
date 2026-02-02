@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  --retro-cream: #f5e8c6;
+  --retro-wood: #b58855;
+  --retro-wood-dark: #8a5b33;
+  --retro-panel: #fdf6df;
+  --retro-green: #cfe6bf;
+  --retro-green-dark: #6b7c60;
+  --retro-blue: #4d6b8a;
+  --retro-blue-light: #dbe6f2;
+  --retro-shadow: #5a4735;
+  --retro-ink: #1a1a1a;
+}
+
+@theme inline {
+  --color-background: var(--retro-cream);
+  --color-foreground: var(--retro-ink);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-title);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.6), transparent 50%),
+    linear-gradient(120deg, #f0e0b0, #e8d4a0, #e0c392);
+  color: var(--retro-ink);
+  font-family: var(--font-body), sans-serif;
+}
+
+.retro-wood {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.25), transparent 70%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(90, 60, 30, 0.2) 0px,
+      rgba(90, 60, 30, 0.2) 2px,
+      rgba(255, 255, 255, 0.1) 4px,
+      rgba(255, 255, 255, 0.1) 6px
+    ),
+    linear-gradient(135deg, var(--retro-wood), var(--retro-wood-dark));
+}
+
+.retro-panel {
+  background: var(--retro-panel);
+  border: 2px solid #d4bfa1;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.7),
+    inset -2px -2px 0 rgba(124, 95, 70, 0.4),
+    0 8px 0 rgba(90, 71, 53, 0.6);
+}
+
+.retro-button {
+  background: linear-gradient(180deg, #fff3d2, #e8d0a8);
+  border: 2px solid #b49b7c;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.8),
+    inset -2px -2px 0 rgba(140, 110, 80, 0.5),
+    0 4px 0 rgba(90, 71, 53, 0.6);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.retro-button:active {
+  transform: translateY(2px);
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.8),
+    inset -2px -2px 0 rgba(140, 110, 80, 0.5),
+    0 2px 0 rgba(90, 71, 53, 0.6);
+}
+
+.retro-title {
+  font-family: var(--font-title), monospace;
+  letter-spacing: 0.06em;
+}
+
+.scanlines {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 100% 4px;
+}
