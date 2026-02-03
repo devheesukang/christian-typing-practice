@@ -1,11 +1,13 @@
 import type { HTMLAttributes } from "react";
 
-type Props = HTMLAttributes<HTMLDivElement>;
+type Props = HTMLAttributes<HTMLDivElement> & {
+    noMargin?: boolean;
+};
 
-export default function GameSection({ className = "", children, ...props }: Props) {
+export default function GameSection({ className = "", children, noMargin = false, ...props }: Props) {
     return (
-        <div {...props} className={`game-border ${className}`}>
-            <div className="m-3 w-full h-full">
+        <div {...props} className={`game-section ${className}`}>
+            <div className={noMargin ? "" : "m-3"} style={{ height: "-webkit-fill-available" }}>
                 {children}
             </div>
         </div>

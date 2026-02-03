@@ -18,7 +18,7 @@ export default function TypingPanel({ inputText, showCursor = true }: Props) {
   return (
     <div
       ref={containerRef}
-      className="retro-scroll scanlines h-full w-full overflow-y-auto bg-white p-4 text-2xl text-[var(--retro-green-dark)] shadow-inner"
+      className="retro-scroll scanlines h-[500px] max-h-[500px] w-full overflow-y-auto bg-white p-4 text-2xl text-[var(--retro-green-dark)] shadow-inner"
     >
       <div className="whitespace-pre-wrap break-words font-mono leading-relaxed">
         {inputText}

@@ -11,9 +11,8 @@ export type ScoreEntry = {
   nickname: string;
   timeMs: number;
   createdAt: string;
-  wrongCount: number;
-  shiftLeft: number;
-  shiftRight: number;
+  cpm?: number;
+  accuracy?: number;
   prayerVersion: PrayerVersion;
 };
 

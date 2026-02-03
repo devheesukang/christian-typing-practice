@@ -26,7 +26,7 @@ export default function SettingsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="retro-panel w-full max-w-lg rounded-2xl p-6">
+      <div className="retro-panel-light w-full max-w-lg rounded-2xl p-6">
         <div className="retro-title mb-4 text-xl text-amber-900">환경 설정</div>
         <div className="space-y-5 text-sm text-amber-900">
           <div>
@@ -35,6 +35,8 @@ export default function SettingsModal({
               <RetroButton
                 type="button"
                 variant={settings.bgmEnabled ? "primary" : "secondary"}
+                className={settings.bgmEnabled ? "is-selected" : ""}
+                aria-pressed={settings.bgmEnabled}
                 onClick={() => update({ bgmEnabled: true })}
               >
                 ON
@@ -42,6 +44,8 @@ export default function SettingsModal({
               <RetroButton
                 type="button"
                 variant={!settings.bgmEnabled ? "primary" : "secondary"}
+                className={!settings.bgmEnabled ? "is-selected" : ""}
+                aria-pressed={!settings.bgmEnabled}
                 onClick={() => update({ bgmEnabled: false })}
               >
                 OFF
@@ -53,6 +57,8 @@ export default function SettingsModal({
                   key={track}
                   type="button"
                   variant={settings.bgmTrack === track ? "primary" : "secondary"}
+                  className={settings.bgmTrack === track ? "is-selected" : ""}
+                  aria-pressed={settings.bgmTrack === track}
                   onClick={() => update({ bgmTrack: track })}
                 >
                   {track}
@@ -67,6 +73,8 @@ export default function SettingsModal({
                 <RetroButton
                   type="button"
                   variant={settings.prayerVersion === "new" ? "primary" : "secondary"}
+                  className={settings.prayerVersion === "new" ? "is-selected" : ""}
+                  aria-pressed={settings.prayerVersion === "new"}
                   onClick={() => update({ prayerVersion: "new" })}
                 >
                   새
@@ -74,6 +82,8 @@ export default function SettingsModal({
                 <RetroButton
                   type="button"
                   variant={settings.prayerVersion === "classic" ? "primary" : "secondary"}
+                  className={settings.prayerVersion === "classic" ? "is-selected" : ""}
+                  aria-pressed={settings.prayerVersion === "classic"}
                   onClick={() => update({ prayerVersion: "classic" })}
                 >
                   개역

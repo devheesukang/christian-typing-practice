@@ -48,6 +48,8 @@ export default function GamePage() {
     [settings.prayerVersion]
   );
   const progress = Math.min(inputText.length / targetText.length, 1);
+  const typedLetters = inputText.length;
+  const totalLetters = targetText.length;
   const displayPrefix = buildDisplayText(
     PRAYER_TEXTS[settings.prayerVersion],
     inputText.length,
@@ -178,14 +180,19 @@ export default function GamePage() {
       const totalMs = finish - baseStart;
       setElapsed(totalMs);
       setCompleted(true);
+      const totalSeconds = totalMs / 1000;
+      const finalCpm = totalSeconds > 0 ? Math.round((nextText.length / totalSeconds) * 60) : 0;
+      const finalAccuracy =
+        nextText.length + wrongCount + nextWrong > 0
+          ? Math.round((nextText.length / (nextText.length + wrongCount + nextWrong)) * 100)
+          : 100;
       const entry: ScoreEntry = {
         id: crypto.randomUUID(),
         nickname: nickname || "TEAM",
         timeMs: totalMs,
         createdAt: new Date().toISOString(),
-        wrongCount: wrongCount + nextWrong,
-        shiftLeft: shiftLeftCount,
-        shiftRight: shiftRightCount,
+        cpm: finalCpm,
+        accuracy: finalAccuracy,
         prayerVersion: settings.prayerVersion,
       };
       const scores = safeLocalStorage.get<ScoreEntry[]>(SCORES_KEY, []);
@@ -202,7 +209,7 @@ export default function GamePage() {
     <div className="wood-bg min-h-screen p-6 text-amber-900">
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
         <RetroPanel className="flex flex-wrap items-center justify-between gap-4">
-          <div className="retro-title text-xl">타자 연습 진행 중</div>
+          <div className="retro-title text-xl text-black font-bold">타자 검정</div>
           <div className="flex items-center gap-3 text-sm">
             <RetroButton variant="secondary" onClick={() => setSettingsOpen(true)}>
               ⚙ 설정
@@ -218,10 +225,10 @@ export default function GamePage() {
           </div>
         </RetroPanel>
 
-        <GamePanel className="flex flex-col">
-          <div className="flex">
+        <GamePanel className="flex flex-col pipe-dividers-y">
+          <div className="flex pipe-dividers-x">
             <GameSection
-              className="w-full h-full rounded-2xl game-border"
+              className="w-full"
               onClick={() => {
                 textareaRef.current?.focus();
               }}
@@ -280,50 +287,69 @@ export default function GamePage() {
                 }}
               />
             </GameSection>
-            <div className="flex flex-col min-w-36">
-              <div className="m-3 rounded-md border border-[#8b6a45] bg-[#0c4b43] px-3 py-2 text-xs text-emerald-100">
-                {nickname || "TEAM"}
-              </div>
-              <div className="flex h-32 items-center justify-center rounded-md border border-[#8b6a45] bg-white">
-                <div className="text-xs text-amber-700">캐릭터</div>
-              </div>
-              <div>
-                <div className="m-3 rounded-md border border-[#8b6a45] bg-[#0c4b43] px-3 py-3 text-center text-2xl font-semibold text-yellow-300">
+            <div className="flex flex-col min-w-36 pipe-dividers-y">
+              <GameSection>
+                <div className="rounded-md border border-[#8b6a45] bg-[#0c4b43] px-3 py-2 text-sm text-center text-emerald-100">
+                  {nickname || "TEAM"}
+                </div>
+              </GameSection>
+              <GameSection noMargin>
+                <div className="flex h-32 items-center justify-center rounded-md border border-[#8b6a45] bg-white">
+                  <div className="text-xs text-amber-700">캐릭터</div>
+                </div>
+              </GameSection>
+              <GameSection>
+                <div className="m-3 py-2 text-sm text-black text-center font-bold">
+                  타자검정
+                </div>
+                <div className="rounded-md border border-[#8b6a45] bg-[#0c4b43] px-3 py-3 text-center text-2xl font-semibold text-yellow-300">
                   {formatElapsed(elapsed).slice(0, 5)}
                 </div>
-                <div className="m-3 px-3 py-2 text-xs text-black">
+                <div className="m-3 py-2 text-sm text-black">
                   주기도문
                 </div>
-                <div className="m-3 px-3 py-2 text-xs text-black">
-                  {Math.max(1, Math.round(progress * 3))}쪽 / 3쪽
+                <div className="m-3 text-xs text-black">
+                  <div className="py-2">
+                    {typedLetters}글자 / {totalLetters}글자
+                  </div>
+                  <div className="pb-2">
+                    <div className="h-2 w-full rounded-full bg-amber-100/70">
+                      <div
+                        className="h-2 rounded-full bg-yellow-300 transition-[width] duration-200"
+                        style={{ width: `${progress * 100}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </GameSection>
             </div>
           </div>
-          <div className="m-3 rounded-md border border-[#8b6a45] bg-[#0c4b43] px-4 py-2 text-sm text-yellow-300">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="min-w-[90px]">타수: {cpm}타/분</div>
-              <div className="flex-1">
-                <div className="h-3 w-full rounded-sm bg-[#d9f4ff]">
-                  <div
-                    className="h-3 rounded-sm bg-[#7fd3ff]"
-                    style={{ width: `${cpmRatio * 100}%` }}
-                  />
+          <GameSection>
+            <div className="rounded-md border border-[#8b6a45] bg-[#0c4b43] px-4 py-2 text-sm text-yellow-300">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-[90px]">타수: {cpm}타/분</div>
+                <div className="flex-1">
+                  <div className="h-3 w-full rounded-sm bg-[#d9f4ff]">
+                    <div
+                      className="h-3 rounded-sm bg-[#7fd3ff]"
+                      style={{ width: `${cpmRatio * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-[90px]">정확도: {accuracy}%</div>
+                <div className="flex-1">
+                  <div className="h-3 w-full rounded-sm bg-white">
+                    <div
+                      className="h-3 rounded-sm bg-white"
+                      style={{ width: `${accuracy}%` }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-              <div className="min-w-[90px]">정확도: {accuracy}%</div>
-              <div className="flex-1">
-                <div className="h-3 w-full rounded-sm bg-white">
-                  <div
-                    className="h-3 rounded-sm bg-white"
-                    style={{ width: `${accuracy}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          </GameSection>
         </GamePanel>
 
       </div>

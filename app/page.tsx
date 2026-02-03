@@ -178,9 +178,10 @@ export default function Home() {
                           </div>
                         </div>
                         <div className="flex flex-wrap gap-3 text-xs text-amber-700">
-                          <div>오타: {score.wrongCount}</div>
-                          <div>ShiftLeft: {score.shiftLeft}</div>
-                          <div>ShiftRight: {score.shiftRight}</div>
+                          <div>타수: {score.cpm ?? "-"}</div>
+                          <div>
+                            정확도: {score.accuracy != null ? `${score.accuracy}%` : "-"}
+                          </div>
                           <div>{score.prayerVersion === "new" ? "새 주기도문" : "개역한글"}</div>
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -238,6 +239,8 @@ export default function Home() {
                       <RetroButton
                         type="button"
                         variant={settings.bgmEnabled ? "primary" : "secondary"}
+                        className={settings.bgmEnabled ? "is-selected" : ""}
+                        aria-pressed={settings.bgmEnabled}
                         onClick={() => updateSettings({ bgmEnabled: true })}
                       >
                         ON
@@ -245,6 +248,8 @@ export default function Home() {
                       <RetroButton
                         type="button"
                         variant={!settings.bgmEnabled ? "primary" : "secondary"}
+                        className={!settings.bgmEnabled ? "is-selected" : ""}
+                        aria-pressed={!settings.bgmEnabled}
                         onClick={() => updateSettings({ bgmEnabled: false })}
                       >
                         OFF
@@ -256,6 +261,8 @@ export default function Home() {
                           key={track}
                           type="button"
                           variant={settings.bgmTrack === track ? "primary" : "secondary"}
+                          className={settings.bgmTrack === track ? "is-selected" : ""}
+                          aria-pressed={settings.bgmTrack === track}
                           onClick={() => updateSettings({ bgmTrack: track })}
                         >
                           {track}

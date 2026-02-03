@@ -18,14 +18,15 @@ export default function ClearPage() {
   return (
     <div className="wood-bg min-h-screen p-6 text-amber-900">
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
-        <RetroPanel title="클리어!">
+        <RetroPanel title="클리어!" light>
           {result ? (
             <div className="space-y-3 text-sm">
               <div className="text-lg font-semibold">{result.nickname}</div>
               <div>기록: {result.durationLabel}</div>
-              <div>오타: {result.wrongCount}</div>
-              <div>ShiftLeft: {result.shiftLeft}</div>
-              <div>ShiftRight: {result.shiftRight}</div>
+              <div>타수: {result.cpm ?? "-"}</div>
+              <div>
+                정확도: {result.accuracy != null ? `${result.accuracy}%` : "-"}
+              </div>
               <div className="text-xs text-amber-700">
                 버전: {result.prayerVersion === "new" ? "새 주기도문" : "개역한글"}
               </div>

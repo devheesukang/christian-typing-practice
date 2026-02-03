@@ -20,7 +20,7 @@ export default function NicknamePage() {
   return (
     <div className="wood-bg min-h-screen p-6 text-amber-900">
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
-        <RetroPanel title="닉네임 입력">
+        <RetroPanel title="닉네임 입력" light>
           <div className="space-y-4">
             <div className="text-sm text-amber-800">
               2명이 함께 사용하는 팀 닉네임을 입력하세요.

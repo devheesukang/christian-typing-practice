@@ -14,7 +14,7 @@ export default function ConfirmModal({ open, message, onConfirm, onCancel }: Pro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="retro-panel w-full max-w-md rounded-2xl p-6">
+      <div className="retro-panel-light w-full max-w-md rounded-2xl p-6">
         <div className="retro-title mb-4 text-xl text-amber-900">확인</div>
         <div className="text-sm text-amber-900">{message}</div>
         <div className="mt-6 flex justify-end gap-2">
