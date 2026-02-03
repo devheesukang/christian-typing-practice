@@ -84,6 +84,35 @@ export default function GamePage() {
     if (!nickname) router.replace("/nickname");
   }, [nickname, router]);
 
+  const resetGame = () => {
+    if (langHintTimerRef.current) {
+      window.clearTimeout(langHintTimerRef.current);
+      langHintTimerRef.current = null;
+    }
+    if (composeFrameRef.current) {
+      cancelAnimationFrame(composeFrameRef.current);
+      composeFrameRef.current = null;
+    }
+    setInputText("");
+    setWrongCount(0);
+    setStartTime(null);
+    setElapsed(0);
+    setShiftLeftCount(0);
+    setShiftRightCount(0);
+    setShowShiftHint(false);
+    setHasShiftHinted(false);
+    setCompleted(false);
+    setRawValue("");
+    setIsComposing(false);
+    setComposingTail("");
+    setShowLangHint(false);
+    if (textareaRef.current) {
+      textareaRef.current.value = "";
+      textareaRef.current.setSelectionRange(0, 0);
+      textareaRef.current.focus();
+    }
+  };
+
   useEffect(() => {
     ["/characters.png", "/characters_happy.png", "/characters_sad.png"].forEach((src) => {
       const img = new Image();
@@ -236,6 +265,14 @@ export default function GamePage() {
           <div className="flex items-center gap-3 text-sm">
             <RetroButton variant="secondary" onClick={() => setSettingsOpen(true)}>
               ⚙ 설정
+            </RetroButton>
+            <RetroButton
+              variant="secondary"
+              onClick={() => {
+                resetGame();
+              }}
+            >
+              다시 시작
             </RetroButton>
             <RetroButton
               variant="secondary"
