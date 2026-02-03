@@ -1,5 +1,17 @@
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow, Menu, protocol } = require("electron");
 const path = require("path");
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: "app",
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+    },
+  },
+]);
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -23,7 +35,7 @@ const createWindow = () => {
   Menu.setApplicationMenu(null);
 
   if (app.isPackaged) {
-    win.loadFile(path.join(app.getAppPath(), "out", "index.html"));
+    win.loadURL("app://index.html");
   } else {
     win.loadURL("http://localhost:3000");
     win.webContents.openDevTools({ mode: "detach" });
@@ -49,7 +61,32 @@ const createWindow = () => {
   });
 };
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  protocol.registerFileProtocol("app", (request, callback) => {
+    const outDir = path.join(app.getAppPath(), "out");
+    try {
+      const url = new URL(request.url);
+      let urlPath = decodeURIComponent(url.pathname || "/");
+      if (urlPath === "/") {
+        urlPath = "/index.html";
+      } else if (urlPath.endsWith("/")) {
+        urlPath = `${urlPath}index.html`;
+      } else if (!path.extname(urlPath)) {
+        urlPath = `${urlPath}/index.html`;
+      }
+      const relativePath = urlPath.replace(/^\/+/, "");
+      const resolvedPath = path.normalize(path.join(outDir, relativePath));
+      if (!resolvedPath.startsWith(outDir)) {
+        callback({ error: -6 });
+        return;
+      }
+      callback({ path: resolvedPath });
+    } catch {
+      callback({ error: -6 });
+    }
+  });
+  createWindow();
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {

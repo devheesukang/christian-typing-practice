@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "electron:dev": "concurrently \"next dev\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron:dist": "npm run build && electron-builder",
+    "electron:dist": "set ELECTRON_BUILD=1 && npm run build && electron-builder",
     "start": "next start",
     "lint": "eslint"
   },
