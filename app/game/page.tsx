@@ -342,26 +342,24 @@ export default function GamePage() {
           </div>
           <GameSection>
             <div className="rounded-md border border-[#8b6a45] bg-[#0c4b43] px-4 py-2 text-sm text-yellow-300">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="min-w-[90px]">타수: {cpm}타/분</div>
-                <div className="flex-1">
-                  <div className="h-3 w-full rounded-sm bg-[#d9f4ff]">
-                    <div
-                      className="h-3 rounded-sm bg-[#7fd3ff]"
-                      style={{ width: `${cpmRatio * 100}%` }}
-                    />
-                  </div>
+              <div className="grid grid-cols-[60px_70px_1fr] items-center gap-x-3">
+                <div className="text-right">타수 :</div>
+                <div>{cpm}타/분</div>
+                <div className="h-3 w-full">
+                  <div
+                    className="h-3 bg-[#7fd3ff]"
+                    style={{ width: `${cpmRatio * 100}%` }}
+                  />
                 </div>
               </div>
-              <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-                <div className="min-w-[90px]">정확도: {accuracy}%</div>
-                <div className="flex-1">
-                  <div className="h-3 w-full rounded-sm bg-white">
-                    <div
-                      className="h-3 rounded-sm bg-white"
-                      style={{ width: `${accuracy}%` }}
-                    />
-                  </div>
+              <div className="mt-2 grid grid-cols-[60px_70px_1fr] items-center gap-x-3">
+                <div className="text-right">정확도 :</div>
+                <div>{accuracy}%</div>
+                <div className="h-3 w-full">
+                  <div
+                    className="h-3 bg-white"
+                    style={{ width: `${accuracy}%` }}
+                  />
                 </div>
               </div>
             </div>
