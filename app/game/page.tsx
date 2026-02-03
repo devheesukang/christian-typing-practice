@@ -65,14 +65,16 @@ export default function GamePage() {
   const characterMood =
     inputText.length === 0
       ? "normal"
-      : cpm < 100
+      : cpm <= 80
         ? "sad"
-        : accuracy >= 90
+        : cpm <= 100
+          ? "normal"
+          : accuracy >= 90
           ? "happy"
           : accuracy < 80
             ? "sad"
             : "normal";
-  const characterSrc =
+  const desiredCharacterSrc =
     characterMood === "happy"
       ? "/characters_happy.png"
       : characterMood === "sad"
@@ -113,12 +115,34 @@ export default function GamePage() {
     }
   };
 
+  const [characterSrc, setCharacterSrc] = useState("/characters.png");
+
+  const loadedCharactersRef = useRef<Set<string> | null>(null);
+  const [loadedVersion, setLoadedVersion] = useState(0);
+
   useEffect(() => {
-    ["/characters.png", "/characters_happy.png", "/characters_sad.png"].forEach((src) => {
+    if (loadedCharactersRef.current) return;
+    const sources = ["/characters.png", "/characters_happy.png", "/characters_sad.png"];
+    const loaded = new Set<string>();
+    loadedCharactersRef.current = loaded;
+
+    sources.forEach((src) => {
       const img = new Image();
+      img.onload = () => {
+        loaded.add(src);
+        setLoadedVersion((v) => v + 1);
+      };
       img.src = src;
     });
   }, []);
+
+  useEffect(() => {
+    const loaded = loadedCharactersRef.current;
+    if (!loaded) return;
+    if (loaded.has(desiredCharacterSrc)) {
+      setCharacterSrc(desiredCharacterSrc);
+    }
+  }, [desiredCharacterSrc, loadedVersion]);
 
   useEffect(() => {
     let frame: number;
