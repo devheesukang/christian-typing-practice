@@ -2,7 +2,7 @@ import type { PrayerVersion } from "./prayers";
 
 export type SettingsState = {
   bgmEnabled: boolean;
-  bgmTrack: "CCM" | "Mario";
+  sfxEnabled: boolean;
   prayerVersion: PrayerVersion;
 };
 

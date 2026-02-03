@@ -1,14 +1,11 @@
-type BgmTrack = "CCM" | "Mario";
-
-const bgmSources: Record<BgmTrack, string> = {
-  CCM: "/bgm/ccm.mp3",
-  Mario: "/bgm/mario.mp3",
-};
+const bgmSource = "/bgm/ccm.mp3";
 
 const sfxSources = {
-  error: "/sfx/error.wav",
-  carve: "/sfx/carve.wav",
+  keyboard: "/keyboard.wav",
+  error: "/error.wav",
 };
+
+let activeSfx: HTMLAudioElement | null = null;
 
 const createOscillator = (frequency: number, duration = 0.15, gainValue = 0.08) => {
   if (typeof window === "undefined") return;
@@ -26,16 +23,25 @@ const createOscillator = (frequency: number, duration = 0.15, gainValue = 0.08) 
 
 export const playSfx = (type: keyof typeof sfxSources) => {
   if (typeof window === "undefined") return;
+  if (activeSfx) {
+    activeSfx.pause();
+    activeSfx.currentTime = 0;
+  }
   const audio = new Audio(sfxSources[type]);
-  audio.volume = type === "error" ? 0.4 : 0.5;
+  audio.volume = type === "error" ? 0.45 : 0.35;
+  activeSfx = audio;
+  audio.onended = () => {
+    if (activeSfx === audio) activeSfx = null;
+  };
   audio.play().catch(() => {
+    if (activeSfx === audio) activeSfx = null;
     createOscillator(type === "error" ? 120 : 240, type === "error" ? 0.2 : 0.12);
   });
 };
 
-export const startBgm = (track: BgmTrack, volume = 0.4) => {
+export const startBgm = (volume = 0.4) => {
   if (typeof window === "undefined") return null;
-  const audio = new Audio(bgmSources[track]);
+  const audio = new Audio(bgmSource);
   audio.loop = true;
   audio.volume = volume;
   audio.play().catch(() => {

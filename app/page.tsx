@@ -255,19 +255,28 @@ export default function Home() {
                         OFF
                       </RetroButton>
                     </div>
-                    <div className="mt-3 flex gap-2">
-                      {(["CCM", "Mario"] as const).map((track) => (
-                        <RetroButton
-                          key={track}
-                          type="button"
-                          variant={settings.bgmTrack === track ? "primary" : "secondary"}
-                          className={settings.bgmTrack === track ? "is-selected" : ""}
-                          aria-pressed={settings.bgmTrack === track}
-                          onClick={() => updateSettings({ bgmTrack: track })}
-                        >
-                          {track}
-                        </RetroButton>
-                      ))}
+                  </div>
+                  <div>
+                    <div className="mb-2 font-semibold">SFX</div>
+                    <div className="flex flex-wrap gap-2">
+                      <RetroButton
+                        type="button"
+                        variant={settings.sfxEnabled ? "primary" : "secondary"}
+                        className={settings.sfxEnabled ? "is-selected" : ""}
+                        aria-pressed={settings.sfxEnabled}
+                        onClick={() => updateSettings({ sfxEnabled: true })}
+                      >
+                        ON
+                      </RetroButton>
+                      <RetroButton
+                        type="button"
+                        variant={!settings.sfxEnabled ? "primary" : "secondary"}
+                        className={!settings.sfxEnabled ? "is-selected" : ""}
+                        aria-pressed={!settings.sfxEnabled}
+                        onClick={() => updateSettings({ sfxEnabled: false })}
+                      >
+                        OFF
+                      </RetroButton>
                     </div>
                   </div>
                 </div>

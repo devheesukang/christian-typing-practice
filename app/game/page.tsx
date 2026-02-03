@@ -13,7 +13,7 @@ import {
   clampTextInput,
   buildDisplayText,
 } from "@/lib/typing";
-import { playSfx, startBgm } from "@/lib/audio";
+import { playSfx } from "@/lib/audio";
 import { safeLocalStorage, SCORES_KEY, LAST_RESULT_KEY } from "@/lib/storage";
 import type { ScoreEntry } from "@/lib/types";
 import { useAppContext } from "@/state/AppContext";
@@ -38,7 +38,6 @@ export default function GamePage() {
   const [composingTail, setComposingTail] = useState("");
   const [showLangHint, setShowLangHint] = useState(false);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const langHintTimerRef = useRef<number | null>(null);
   const composeFrameRef = useRef<number | null>(null);
@@ -157,27 +156,6 @@ export default function GamePage() {
   }, [startTime, completed]);
 
   useEffect(() => {
-    if (!settings.bgmEnabled) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      return;
-    }
-    audioRef.current?.pause();
-    audioRef.current = startBgm(settings.bgmTrack, 0.3);
-    return () => {
-      audioRef.current?.pause();
-      audioRef.current = null;
-    };
-  }, [settings.bgmEnabled, settings.bgmTrack]);
-
-  useEffect(() => {
-    if (!completed) return;
-    audioRef.current?.pause();
-  }, [completed]);
-
-  useEffect(() => {
     if (hasShiftHinted) return;
     if (progress > 0.25 && shiftLeftCount + shiftRightCount === 0) {
       setShowShiftHint(true);
@@ -239,10 +217,14 @@ export default function GamePage() {
       if (!targetChar) break;
       if (char === targetChar) {
         nextText += char;
-        playSfx("carve");
+        if (settings.sfxEnabled) {
+          playSfx("keyboard");
+        }
       } else {
         nextWrong += 1;
-        playSfx("error");
+        if (settings.sfxEnabled) {
+          playSfx("error");
+        }
       }
     }
     const baseStart = startTime ?? performance.now();
@@ -357,6 +339,15 @@ export default function GamePage() {
                   handleInput(composed);
                 }}
                 onKeyDown={(event) => {
+                  if (
+                    settings.sfxEnabled &&
+                    (event.isComposing || event.key === "Process") &&
+                    event.key !== "Backspace" &&
+                    event.key !== "Delete" &&
+                    event.key !== "Enter"
+                  ) {
+                    playSfx("keyboard");
+                  }
                   if (
                     (event.key === "Backspace" || event.key === "Delete") &&
                     rawValue.length <= inputText.length

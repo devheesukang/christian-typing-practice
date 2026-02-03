@@ -13,7 +13,7 @@ type AppContextValue = {
 
 const defaultSettings: SettingsState = {
   bgmEnabled: true,
-  bgmTrack: "CCM",
+  sfxEnabled: true,
   prayerVersion: "new",
 };
 
@@ -24,7 +24,15 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [nickname, setNicknameState] = useState("");
 
   useEffect(() => {
-    setSettingsState(safeLocalStorage.get(SETTINGS_KEY, defaultSettings));
+    const stored = safeLocalStorage.get(SETTINGS_KEY, defaultSettings);
+    const migrated = {
+      ...stored,
+      sfxEnabled:
+        typeof stored.sfxEnabled === "boolean"
+          ? stored.sfxEnabled
+          : Boolean(stored.keyboardSfxEnabled ?? stored.errorSfxEnabled ?? true),
+    };
+    setSettingsState({ ...defaultSettings, ...migrated });
     setNicknameState(safeLocalStorage.get(NICKNAME_KEY, ""));
   }, []);
 
