@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import RetroPanel from "@/components/RetroPanel";
 import RetroButton from "@/components/RetroButton";
@@ -10,12 +10,8 @@ import { useAppContext } from "@/state/AppContext";
 export default function NicknamePage() {
   const router = useRouter();
   const { nickname, setNickname } = useAppContext();
-  const [value, setValue] = useState(nickname || makeTeamNickname());
-
-  useEffect(() => {
-    if (!nickname) return;
-    setValue(nickname);
-  }, [nickname]);
+  const initialValueRef = useRef(nickname || makeTeamNickname());
+  const [value, setValue] = useState(initialValueRef.current);
 
   return (
     <div className="wood-bg min-h-screen p-6 text-amber-900">

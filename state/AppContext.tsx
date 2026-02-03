@@ -20,11 +20,12 @@ const defaultSettings: SettingsState = {
 const AppContext = createContext<AppContextValue | null>(null);
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [settings, setSettingsState] = useState<SettingsState>(defaultSettings);
-  const [nickname, setNicknameState] = useState("");
-
-  useEffect(() => {
-    const stored = safeLocalStorage.get(SETTINGS_KEY, defaultSettings);
+  const [settings, setSettingsState] = useState<SettingsState>(() => {
+    type LegacySettings = SettingsState & {
+      keyboardSfxEnabled?: boolean;
+      errorSfxEnabled?: boolean;
+    };
+    const stored = safeLocalStorage.get<LegacySettings>(SETTINGS_KEY, defaultSettings);
     const migrated = {
       ...stored,
       sfxEnabled:
@@ -32,9 +33,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           ? stored.sfxEnabled
           : Boolean(stored.keyboardSfxEnabled ?? stored.errorSfxEnabled ?? true),
     };
-    setSettingsState({ ...defaultSettings, ...migrated });
-    setNicknameState(safeLocalStorage.get(NICKNAME_KEY, ""));
-  }, []);
+    return { ...defaultSettings, ...migrated };
+  });
+  const [nickname, setNicknameState] = useState(() =>
+    safeLocalStorage.get(NICKNAME_KEY, "")
+  );
 
   useEffect(() => {
     safeLocalStorage.set(SETTINGS_KEY, settings);

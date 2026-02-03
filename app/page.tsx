@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import RetroButton from "@/components/RetroButton";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -15,7 +15,10 @@ export default function Home() {
   const { settings, setSettings } = useAppContext();
   const [selected, setSelected] = useState<PrayerVersion>("new");
   const [menu, setMenu] = useState<"start" | "records" | "settings">("start");
-  const [scores, setScores] = useState<ScoreEntry[]>([]);
+  const initialScoresRef = useRef<ScoreEntry[]>(
+    safeLocalStorage.get<ScoreEntry[]>(SCORES_KEY, [])
+  );
+  const [scores, setScores] = useState<ScoreEntry[]>(initialScoresRef.current);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -29,10 +32,6 @@ export default function Home() {
   const updateSettings = (patch: Partial<typeof settings>) => {
     setSettings({ ...settings, ...patch });
   };
-
-  useEffect(() => {
-    setScores(safeLocalStorage.get<ScoreEntry[]>(SCORES_KEY, []));
-  }, []);
 
   return (
     <div className="wood-bg min-h-screen p-6 text-amber-900">

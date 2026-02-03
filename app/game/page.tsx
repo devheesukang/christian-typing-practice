@@ -33,13 +33,14 @@ export default function GamePage() {
   const [showShiftHint, setShowShiftHint] = useState(false);
   const [hasShiftHinted, setHasShiftHinted] = useState(false);
   const [completed, setCompleted] = useState(false);
-  const [rawValue, setRawValue] = useState("");
+  const rawValueRef = useRef("");
   const [isComposing, setIsComposing] = useState(false);
   const [composingTail, setComposingTail] = useState("");
   const [showLangHint, setShowLangHint] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const langHintTimerRef = useRef<number | null>(null);
+  const shiftHintTimerRef = useRef<number | null>(null);
   const composeFrameRef = useRef<number | null>(null);
 
   const targetText = useMemo(
@@ -90,6 +91,10 @@ export default function GamePage() {
       window.clearTimeout(langHintTimerRef.current);
       langHintTimerRef.current = null;
     }
+    if (shiftHintTimerRef.current) {
+      window.clearTimeout(shiftHintTimerRef.current);
+      shiftHintTimerRef.current = null;
+    }
     if (composeFrameRef.current) {
       cancelAnimationFrame(composeFrameRef.current);
       composeFrameRef.current = null;
@@ -103,7 +108,7 @@ export default function GamePage() {
     setShowShiftHint(false);
     setHasShiftHinted(false);
     setCompleted(false);
-    setRawValue("");
+    rawValueRef.current = "";
     setIsComposing(false);
     setComposingTail("");
     setShowLangHint(false);
@@ -114,34 +119,29 @@ export default function GamePage() {
     }
   };
 
-  const [characterSrc, setCharacterSrc] = useState("/characters.png");
-
-  const loadedCharactersRef = useRef<Set<string> | null>(null);
-  const [loadedVersion, setLoadedVersion] = useState(0);
+  const [loadedCharacters, setLoadedCharacters] = useState<Set<string>>(
+    () => new Set()
+  );
 
   useEffect(() => {
-    if (loadedCharactersRef.current) return;
     const sources = ["/characters.png", "/characters_happy.png", "/characters_sad.png"];
-    const loaded = new Set<string>();
-    loadedCharactersRef.current = loaded;
-
     sources.forEach((src) => {
       const img = new Image();
       img.onload = () => {
-        loaded.add(src);
-        setLoadedVersion((v) => v + 1);
+        setLoadedCharacters((prev) => {
+          if (prev.has(src)) return prev;
+          const next = new Set(prev);
+          next.add(src);
+          return next;
+        });
       };
       img.src = src;
     });
   }, []);
 
-  useEffect(() => {
-    const loaded = loadedCharactersRef.current;
-    if (!loaded) return;
-    if (loaded.has(desiredCharacterSrc)) {
-      setCharacterSrc(desiredCharacterSrc);
-    }
-  }, [desiredCharacterSrc, loadedVersion]);
+  const characterSrc = loadedCharacters.has(desiredCharacterSrc)
+    ? desiredCharacterSrc
+    : "/characters.png";
 
   useEffect(() => {
     let frame: number;
@@ -156,36 +156,34 @@ export default function GamePage() {
   }, [startTime, completed]);
 
   useEffect(() => {
-    if (hasShiftHinted) return;
-    if (progress > 0.25 && shiftLeftCount + shiftRightCount === 0) {
-      setShowShiftHint(true);
-      setHasShiftHinted(true);
-      const timer = window.setTimeout(() => setShowShiftHint(false), 2000);
-      return () => window.clearTimeout(timer);
-    }
-  }, [progress, shiftLeftCount, shiftRightCount, hasShiftHinted]);
-
-  useEffect(() => {
     textareaRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    if (isComposing) return;
-    if (!textareaRef.current) return;
-    if (textareaRef.current.value !== inputText) {
-      textareaRef.current.value = inputText;
-    }
-    textareaRef.current.setSelectionRange(inputText.length, inputText.length);
-    setRawValue(inputText);
-  }, [inputText, isComposing]);
-
-  useEffect(() => {
     return () => {
+      if (shiftHintTimerRef.current) {
+        window.clearTimeout(shiftHintTimerRef.current);
+      }
       if (composeFrameRef.current) {
         cancelAnimationFrame(composeFrameRef.current);
       }
     };
   }, []);
+
+  const maybeShowShiftHint = (nextLength: number) => {
+    if (hasShiftHinted) return;
+    if (shiftLeftCount + shiftRightCount > 0) return;
+    if (nextLength / targetText.length <= 0.25) return;
+    setShowShiftHint(true);
+    setHasShiftHinted(true);
+    if (shiftHintTimerRef.current) {
+      window.clearTimeout(shiftHintTimerRef.current);
+    }
+    shiftHintTimerRef.current = window.setTimeout(() => {
+      setShowShiftHint(false);
+      shiftHintTimerRef.current = null;
+    }, 2000);
+  };
 
   const handleInput = (nextValue: string) => {
     if (completed) return;
@@ -201,7 +199,7 @@ export default function GamePage() {
       }, 1800);
     }
     if (cleaned.length < inputText.length) {
-      setRawValue(inputText);
+      rawValueRef.current = inputText;
       if (textareaRef.current) {
         textareaRef.current.value = inputText;
         textareaRef.current.setSelectionRange(inputText.length, inputText.length);
@@ -232,7 +230,15 @@ export default function GamePage() {
       setStartTime(baseStart);
     }
     if (nextWrong > 0) setWrongCount((prev) => prev + nextWrong);
-    if (nextText !== inputText) setInputText(nextText);
+    if (nextText !== inputText) {
+      rawValueRef.current = nextText;
+      setInputText(nextText);
+      if (!isComposing && textareaRef.current) {
+        textareaRef.current.value = nextText;
+        textareaRef.current.setSelectionRange(nextText.length, nextText.length);
+      }
+    }
+    maybeShowShiftHint(nextText.length);
     if (nextText.length >= targetText.length) {
       const finish = performance.now();
       const totalMs = finish - baseStart;
@@ -305,7 +311,7 @@ export default function GamePage() {
                 className="absolute h-0 w-0 opacity-0"
                 onChange={(event) => {
                   const next = (event.target as HTMLTextAreaElement).value;
-                  setRawValue(next);
+                  rawValueRef.current = next;
                   if (isComposing) return;
                   handleInput(next);
                 }}
@@ -322,7 +328,7 @@ export default function GamePage() {
                     const composed = next.startsWith(inputText) ? next : `${inputText}${next}`;
                     const tail = composed.slice(inputText.length);
                     setComposingTail(tail);
-                    setRawValue(composed);
+                    rawValueRef.current = composed;
                     composeFrameRef.current = null;
                   });
                 }}
@@ -331,7 +337,7 @@ export default function GamePage() {
                   const composed = next.startsWith(inputText) ? next : `${inputText}${next}`;
                   setIsComposing(false);
                   setComposingTail("");
-                  setRawValue(composed);
+                  rawValueRef.current = composed;
                   if (textareaRef.current) {
                     textareaRef.current.value = composed;
                     textareaRef.current.setSelectionRange(composed.length, composed.length);
@@ -339,9 +345,11 @@ export default function GamePage() {
                   handleInput(composed);
                 }}
                 onKeyDown={(event) => {
+                  const isImeComposing =
+                    event.nativeEvent.isComposing || event.key === "Process";
                   if (
                     settings.sfxEnabled &&
-                    (event.isComposing || event.key === "Process") &&
+                    isImeComposing &&
                     event.key !== "Backspace" &&
                     event.key !== "Delete" &&
                     event.key !== "Enter"
@@ -350,7 +358,7 @@ export default function GamePage() {
                   }
                   if (
                     (event.key === "Backspace" || event.key === "Delete") &&
-                    rawValue.length <= inputText.length
+                    rawValueRef.current.length <= inputText.length
                   ) {
                     event.preventDefault();
                   }

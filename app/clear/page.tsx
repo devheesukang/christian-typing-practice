@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import RetroPanel from "@/components/RetroPanel";
 import RetroButton from "@/components/RetroButton";
@@ -9,11 +9,9 @@ import type { GameResult } from "@/lib/types";
 
 export default function ClearPage() {
   const router = useRouter();
-  const [result, setResult] = useState<GameResult | null>(null);
-
-  useEffect(() => {
-    setResult(safeLocalStorage.get<GameResult | null>(LAST_RESULT_KEY, null));
-  }, []);
+  const [result] = useState<GameResult | null>(() =>
+    safeLocalStorage.get<GameResult | null>(LAST_RESULT_KEY, null)
+  );
 
   return (
     <div className="wood-bg min-h-screen p-6 text-amber-900">

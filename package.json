@@ -46,9 +46,7 @@
         "nsis",
         "portable"
       ],
-      "arch": [
-        "x64"
-      ]
+      "signAndEditExecutable": false
     }
   }
 }
