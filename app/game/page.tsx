@@ -85,6 +85,13 @@ export default function GamePage() {
   }, [nickname, router]);
 
   useEffect(() => {
+    ["/characters.png", "/characters_happy.png", "/characters_sad.png"].forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
+  useEffect(() => {
     let frame: number;
     const tick = () => {
       if (startTime !== null && !completed) {
