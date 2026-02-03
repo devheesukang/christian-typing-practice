@@ -9,7 +9,7 @@
 
 ## 🌐 데모 사이트
 
-👉 https://christian-typing-practice.vercel.app/
+👉 [christian-typing-practice.vercel.app](https://christian-typing-practice.vercel.app/)
 
 (Vercel을 통해 배포된 최신 버전입니다)
 
@@ -54,8 +54,10 @@
 
 실행 방법:
 
-npm install  
-npm run dev  
+```bash
+npm install
+npm run dev
+```
 
 기본적으로 http://localhost:3000 에서 실행됩니다.
 
@@ -65,7 +67,9 @@ npm run dev
 
 빌드 명령어:
 
-npm run build  
+```bash
+npm run build
+```
 
 설명:
 
@@ -79,7 +83,9 @@ npm run build
 
 개발 모드 실행:
 
-npm run electron:dev  
+```bash
+npm run electron:dev
+```
 
 Next.js 개발 서버와 Electron을 동시에 실행합니다.
 
@@ -89,7 +95,9 @@ Next.js 개발 서버와 Electron을 동시에 실행합니다.
 
 배포 빌드:
 
-npm run electron:dist  
+```bash
+npm run electron:dist
+```
 
 실행 시:
 
@@ -102,12 +110,14 @@ npm run electron:dist
 
 ## 📁 프로젝트 구조 (요약)
 
-app/          Next.js App Router 페이지  
-components/   UI 컴포넌트  
-lib/          텍스트/저장/사운드 로직  
-state/        설정 상태 관리  
-electron/     Electron 메인 프로세스  
-public/       사운드/이미지 리소스  
+| 경로 | 설명 |
+| --- | --- |
+| `app/` | Next.js App Router 페이지 |
+| `components/` | UI 컴포넌트 |
+| `lib/` | 텍스트/저장/사운드 로직 |
+| `state/` | 설정 상태 관리 |
+| `electron/` | Electron 메인 프로세스 |
+| `public/` | 사운드/이미지 리소스 |
 
 ---
 
@@ -124,4 +134,3 @@ public/       사운드/이미지 리소스
 
 - Developer: Heesu Kang
 - 목적: 교회 수련회 및 공동체 활동용 미니 게임 제작
-
