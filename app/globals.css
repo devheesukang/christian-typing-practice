@@ -322,3 +322,12 @@ body {
   background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 100% 4px;
 }
+
+.character-sprite {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: 0% 0%;
+  background-size: 300% 200%;
+  image-rendering: auto;
+}

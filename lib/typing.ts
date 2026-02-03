@@ -67,8 +67,7 @@ export const formatElapsed = (ms: number) => {
 };
 
 export const makeTeamNickname = () => {
-  const suffix = Math.floor(100 + Math.random() * 900);
-  return `TEAM-${suffix}`;
+  return `매듭 회장단`;
 };
 
 export const clampTextInput = (value: string) =>

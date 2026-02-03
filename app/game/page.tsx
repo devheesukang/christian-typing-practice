@@ -62,6 +62,22 @@ export default function GamePage() {
     inputText.length + wrongCount > 0
       ? Math.round((inputText.length / (inputText.length + wrongCount)) * 100)
       : 100;
+  const characterMood =
+    inputText.length === 0
+      ? "normal"
+      : cpm < 100
+        ? "sad"
+        : accuracy >= 90
+          ? "happy"
+          : accuracy < 80
+            ? "sad"
+            : "normal";
+  const characterSrc =
+    characterMood === "happy"
+      ? "/characters_happy.png"
+      : characterMood === "sad"
+        ? "/characters_sad.png"
+        : "/characters.png";
   const cpmRatio = Math.min(cpm / 800, 1);
 
   useEffect(() => {
@@ -295,30 +311,30 @@ export default function GamePage() {
               </GameSection>
               <GameSection noMargin>
                 <div className="flex h-32 items-center justify-center rounded-md border border-[#8b6a45] bg-white">
-                  <div className="text-xs text-amber-700">캐릭터</div>
+                  <div
+                    className="character-sprite"
+                    style={{ backgroundImage: `url(${characterSrc})` }}
+                    aria-label="캐릭터"
+                  />
                 </div>
               </GameSection>
-              <GameSection>
+              <GameSection className="h-full">
                 <div className="m-3 py-2 text-sm text-black text-center font-bold">
                   타자검정
                 </div>
                 <div className="rounded-md border border-[#8b6a45] bg-[#0c4b43] px-3 py-3 text-center text-2xl font-semibold text-yellow-300">
                   {formatElapsed(elapsed).slice(0, 5)}
                 </div>
-                <div className="m-3 py-2 text-sm text-black">
+                <div className="m-1 py-2 text-sm text-black">
                   주기도문
                 </div>
-                <div className="m-3 text-xs text-black">
-                  <div className="py-2">
+                <div className="relative h-5 w-full rounded bg-amber-100/20 overflow-hidden">
+                  <div
+                    className="h-5 bg-yellow-300 transition-[width] duration-200"
+                    style={{ width: `${progress * 100}%` }}
+                  />
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-black font-bold">
                     {typedLetters}글자 / {totalLetters}글자
-                  </div>
-                  <div className="pb-2">
-                    <div className="h-2 w-full rounded-full bg-amber-100/70">
-                      <div
-                        className="h-2 rounded-full bg-yellow-300 transition-[width] duration-200"
-                        style={{ width: `${progress * 100}%` }}
-                      />
-                    </div>
                   </div>
                 </div>
               </GameSection>
