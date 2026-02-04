@@ -13,14 +13,32 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
+const getIconPath = () => {
+  if (app.isPackaged) {
+    if (process.platform === "win32") {
+      return path.join(process.resourcesPath, "logo_electron.ico");
+    }
+    return path.join(process.resourcesPath, "logo_electron.png");
+  }
+
+  return path.join(
+    __dirname,
+    "..",
+    "public",
+    process.platform === "win32" ? "logo_electron.ico" : "logo_electron.png",
+  );
+};
+
 const createWindow = () => {
+  const iconPath = getIconPath();
+
   const win = new BrowserWindow({
     width: 1200,
     height: 840,
     resizable: true,
     maximizable: true,
     fullscreen: false,
-    icon: path.join(__dirname, "..", "public", "logo.png"),
+    icon: iconPath,
     backgroundColor: "#f5e8c6",
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
@@ -62,6 +80,9 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
+  if (process.platform === "win32") {
+    app.setAppUserModelId("com.winterretreat.typing");
+  }
   protocol.registerFileProtocol("app", (request, callback) => {
     const outDir = path.join(app.getAppPath(), "out");
     try {
